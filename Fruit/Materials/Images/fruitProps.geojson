@@ -1,0 +1,29 @@
+{
+    "size":3,
+    "props0":["header":"props0.png","name":"透视镜","price":"售价：300金币/个"
+              ,"dprice":300,"detail":"可以看见随机两个箱子里的水果持续十秒"],
+    "props1":["header":"props1.png","name":"沙漏","price":"售价：500金币/个"
+              ,"dprice":500,"detail":"可以延长游戏时间30秒"],   
+    "props2":["header":"props2.png","name":"木槌","price":"售价：1000金币/个"
+              ,"dprice":1000,"detail":"可以砸开一对一样的水果"],
+    "props3":["header":"props2.png","name":"木槌","price":"售价：1000金币/个"
+              ,"dprice":2000,"detail":"可以砸开一对一样的水果"],
+    
+    "props4":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":30,"detail":"爆破性的行为，很直接哟"],
+    "props5":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":40,"detail":"爆破性的行为，很直接哟"],
+    "props6":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":50,"detail":"爆破性的行为，很直接哟"],
+    "props7":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":60,"detail":"爆破性的行为，很直接哟"],
+    
+    "props8":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":70,"detail":"爆破性的行为，很直接哟"],
+    "props9":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":80,"detail":"爆破性的行为，很直接哟"],
+    "props10":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":90,"detail":"爆破性的行为，很直接哟"],
+    "props11":["header":"props2.png","name":"锤子","price":"售价：30金币/个"
+              ,"dprice":30,"detail":"爆破性的行为，很直接哟"]
+}
