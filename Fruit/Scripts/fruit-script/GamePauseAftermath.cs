@@ -55,18 +55,12 @@ public class GamePauseAftermath : MonoBehaviour
 	/// </param>
 	void cleanLevel (Transform trans)
 	{
+		//清理关卡
 		Transform transOff = trans.FindChild ("Panel-sprite").FindChild ("Offset");
-		//重置关卡
-        NowMode now = Globe.getPanelOfParent(trans, 1, "Panel - Main").FindChild("ButtonsRight").FindChild("BtnBotton").GetComponent<NowMode>();
-        print(now+"<>"+transOff);
-        now.levelOffsetGo = transOff.gameObject;
-        now.itemCardLayer();
-
 		for (int i = 0; i < transOff.GetChildCount(); i++) {
 			Transform transf = transOff.GetChild (i);
 			Destroy (transf.gameObject, 1.0f);
 		}
-        transOff.GetComponent<UIItemCard>().initLevel();
 	}
 	
 	
