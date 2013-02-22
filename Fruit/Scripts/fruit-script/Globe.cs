@@ -17,7 +17,7 @@ public class Globe
 	public static int list_offset;
 	public static string list_go_name;*/
 	
-	public static string jsonURL = "file://" + Application.dataPath + @"/Fruit/Data/FruitJson.txt";
+	public static string jsonURL = "file://" + Application.dataPath + @"/Fruit/Data/FruitJson.json";
 	public static string[] stayNames=new string[]{"Offset","GameWindow"};
 	public static HelpFruit helper;
 	public static Transform thisPanel;
