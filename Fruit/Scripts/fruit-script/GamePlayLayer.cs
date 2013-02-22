@@ -39,19 +39,6 @@ public class GamePlayLayer : MonoBehaviour
         createButtons();
 
     }
-
-    void createButtons()
-    {
-        Transform transPause = transform.FindChild("PanelPause");
-        transPause.localPosition = new Vector3(0f, -680f, -5f);
-        goButtons = transPause.FindChild("Buttons");
-        GameObject[] panels = Globe.getPanelObject(transform, new string[] { "Panel - Main", "Panel - Shop", "Panel - Level" });
-
-        if (goButtons.GetChildCount() <= 0)
-            addButtons(transPause, goButtons, panels);
-
-    }
-
     public void initGameWindow(int cLevel)
     {
         lbl = transform.FindChild("LabelTime").GetComponent<UILabel>();
@@ -67,7 +54,7 @@ public class GamePlayLayer : MonoBehaviour
 
 
         //头图片个数
-        int maxCard = Globe.askbox[cLevel - 1].Length;
+        int maxCard = Globe.askbox[cLevel-1].Length;
 
         Globe.box = new ArrayRandom(maxCard).NonRepeatArray(1, 16);
         Globe.cards = new List<string>();
@@ -75,7 +62,7 @@ public class GamePlayLayer : MonoBehaviour
 
         for (int j = 0; j < maxCard; j++)
         {
-            int __count = int.Parse(Globe.askbox[cLevel - 1][j]);
+            int __count = int.Parse(Globe.askbox[cLevel-1][j]);
             if (j == maxCard - 1)
             {
                 Globe.findCount = __count;
@@ -115,6 +102,18 @@ public class GamePlayLayer : MonoBehaviour
         foreach (KeyValuePair<string, int> kvp in Globe.sameSize) {
             print (kvp.Key + ":" + kvp.Value);
         }*/
+
+    }
+	
+	void createButtons()
+    {
+        Transform transPause = transform.FindChild("PanelPause");
+        transPause.localPosition = new Vector3(0f, -680f, -5f);
+        goButtons = transPause.FindChild("Buttons");
+        GameObject[] panels = Globe.getPanelObject(transform, new string[] { "Panel - Main", "Panel - Shop", "Panel - Level" });
+
+        if (goButtons.GetChildCount() <= 0)
+            addButtons(transPause, goButtons, panels);
 
     }
 
@@ -161,7 +160,7 @@ public class GamePlayLayer : MonoBehaviour
             ut.cleaner();
             ut.createTemp(names);
         }
-
+		PlayerPrefs.SetInt("GameWindow",1);
 
         //		else if (PlayerPrefs.GetInt ("PanelGamePlay") == -1) {
         //			//中途退出

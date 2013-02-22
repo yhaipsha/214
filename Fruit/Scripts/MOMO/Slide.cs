@@ -44,10 +44,12 @@ public class Slide : MonoBehaviour
 
 	void Update ()
 	{
-//		print (Globe.helper.ListPanel);
-//		if(Globe.helper.ListPanel != null)
+	
+		if(Globe.helper != null){
+//			print (Globe.helper.ListPanel);
 		Globe.helper.ListPanel.transform.localPosition = Vector3.Lerp (Globe.helper.ListPanel.transform.localPosition, new Vector3 (-(Globe.helper.list_currentIndex * Globe.helper.list_offset), 0, 0), Time.deltaTime * 5);
-
+			
+		}
 	}
 
 	void OnClick ()

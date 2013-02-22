@@ -20,13 +20,9 @@ public class DecorateNextGame : MonoBehaviour
     void OnClick()
     {
         //next level
-        int currentLevel = PlayerPrefs.GetInt("NowPlay");
         int currentMode = PlayerPrefs.GetInt("NowMode");
-        string lastlevelName = Globe.jsonLableNames[currentMode - 1] + currentLevel;
-        print(currentLevel + ",lastLevelName = " + lastlevelName);
 
-        PlayerPrefs.SetInt(lastlevelName, 3);
-        PlayerPrefs.SetInt("NowPlay", currentLevel + 1);
+        PlayerPrefs.SetInt("NowPlay", PlayerPrefs.GetInt("NowPlay") + 1);
         PlayerPrefs.Save();
         //		if (transGamePanel != null)
         //			transGamePanel.GetComponent<GamePlayLayer> ().initGameWindow (PlayerPrefs.GetInt ("NowPlay"));

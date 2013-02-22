@@ -10,16 +10,42 @@ public class GameWinLayer : MonoBehaviour
 //		init ();
 	}
 	
-	void init ()
+  	public void init (int result)
 	{
+
+		
+		switch (result) {
+		case 0:
+			showResultSprite( false,"game_failed");
+			break;
+		case 1:
+			showResultSprite( true,"game_win");
+			break;
+		}
+		/*
 		GameObject[] panels = Globe.getPanelObject (transform
 			, new string[]{"Panel - Main","Panel - Shop","Panel - Help","Panel - Level","Panel - GamePlay","Panel - GamePlay"});
 		
 		string[] prefabs = new string[]{"BtnHome","BtnShop","BtnHelp","BtnLevel","BtnReplay","BtnNext"};
 		createButtons (prefabs.Take(3).ToArray(), transform.FindChild ("UpButtons")	, panels.Take(4).ToArray());
 		createButtons (prefabs.Skip(3).Take(3).ToArray(), transform.FindChild ("DownButtons"), panels.Skip(3).Take(3).ToArray());
+		*/
 	}
 	
+	void showResultSprite( bool on,string spriteName)
+	{
+		transform.FindChild("DownButtons").FindChild("p2BtnNext").gameObject.SetActive(on);
+		UISprite sp = transform.FindChild("Show").FindChild("SlicedSprite").GetComponent<UISlicedSprite>();
+		sp.spriteName=spriteName;
+		sp.MakePixelPerfect();
+		
+		string lastlevelName = Globe.jsonLableNames[PlayerPrefs.GetInt("NowMode") - 1] + PlayerPrefs.GetInt("NowPlay");
+        print("lastLevelName = " + lastlevelName);
+
+        PlayerPrefs.SetInt(lastlevelName, 3-Globe.errorCount);
+		print (PlayerPrefs.GetInt(lastlevelName));
+		Globe.errorCount=0;
+	}
 	void createButtons (string[] prefabs, Transform transFather, GameObject[] panels)
 	{
 //		string[] prefabs = new string[]{"BtnHome","BtnShop","BtnHelp"};	

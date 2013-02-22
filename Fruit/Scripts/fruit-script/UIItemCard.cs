@@ -171,9 +171,9 @@ public class UIItemCard : MonoBehaviour
                                 //objGo = Other ("level1-3", template, _number + 1);
                                 objGo = AddGameObject(atlasSpriteNames[4], _number);
                                 break;
-                            /*default:
-                                objGo = Other ("level0", template, _number + 1);
-                                break;*/
+//                            default:
+//                                objGo = AddGameObject(atlasSpriteNames[0], _number);
+//                                break;
                         }
                     }
 

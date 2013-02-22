@@ -55,16 +55,9 @@ public class UIItemStorageTest : MonoBehaviour
 
 	public int padding = 10;
 	
-	public Transform templateSprite;
-
-	
+	public Transform templateSprite;	
 	List<InvGameItem> mItems = new List<InvGameItem>();
 
-
-	
-	/// <summary>
-	/// Initialize the container and create an appropriate number of UI slots.
-	/// </summary>
 
 	void Start ()
 	{
@@ -77,10 +70,11 @@ public class UIItemStorageTest : MonoBehaviour
 		tempObj.transform.parent = transform;
 		tempObj.transform.localScale = new Vector3 (1f, 1f, 1f);
 //		print ("in the test ="+spriteName);
-		UISlicedSprite sp = tempObj.transform.FindChild("Sprite-box").GetComponent<UISlicedSprite> ();			
-		sp.spriteName = spriteName;
+		UISlicedSprite sprite = tempObj.transform.FindChild("Sprite-box").GetComponent<UISlicedSprite> ();			
+		sprite.transform.rotation = Quaternion.Euler (0f, 180f, 0f);
+		sprite.spriteName = spriteName;
 		
-		sp.MakePixelPerfect ();
+		sprite.MakePixelPerfect ();
 		
 		return tempObj;
 	}
@@ -119,6 +113,8 @@ public class UIItemStorageTest : MonoBehaviour
 					}
 				}
 			}
+//			TurnRight2[] tr = transform.GetComponentsInChildren<TurnRight2>();
+			
 			if (background != null) background.transform.localScale = b.size;
 		}
 	}

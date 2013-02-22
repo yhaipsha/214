@@ -17,12 +17,7 @@ public class ExampleAtlas : MonoBehaviour
 	void Start ()
 	{
 		sprite = GetComponent<UISlicedSprite> ();
-		sprite.transform.rotation = Quaternion.Euler (0f, 180f, 0f);
-	}
-	/**/
-	public void init ()
-	{				
-		
+//		sprite.transform.rotation = Quaternion.Euler (0f, 180f, 0f);
 	}
 
 	public void NextSprite (string name)
@@ -40,7 +35,7 @@ public class ExampleAtlas : MonoBehaviour
 				switch (PlayerPrefs.GetInt("NowMode")) {
 				case 1:
 					index=0;
-					toPanelWin();
+					toPanelWin(1);
 					break;
 				case 2:
 					break;
@@ -67,7 +62,7 @@ public class ExampleAtlas : MonoBehaviour
 			//移空所有项，显示成功页面
 			
 //			sprite.spriteName = name;
-		} else {
+		} else {			
 			sprite.spriteName = name;
 			
 		}
@@ -75,13 +70,13 @@ public class ExampleAtlas : MonoBehaviour
 		
 		
 		
-		sprite.transform.rotation = Quaternion.Euler (0f, 180f, 0f);
+//		sprite.transform.rotation = Quaternion.Euler (0f, 180f, 0f);
 		sprite.MakePixelPerfect (); 
 		
 		//return sprite.spriteName;
 	}
 	
-	void toPanelWin ()
+	public void toPanelWin (int result)
 	{
 		//写通关数据
 //		print(LitJsonUtil.readAll(Globe.jsonURL.Replace("file://",""), 0));
@@ -89,8 +84,8 @@ public class ExampleAtlas : MonoBehaviour
 
 		transform.parent.GetComponent<TweenPosition> ().Reset();				
 		nextLayer.GetComponent<TweenPosition> ().Play (true);
-
 		
+		nextLayer.GetComponent<GameWinLayer>().init(result);
 
 	}
 }

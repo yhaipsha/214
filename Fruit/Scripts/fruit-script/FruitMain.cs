@@ -16,16 +16,13 @@ public class FruitMain : MonoBehaviour
         foreach (string item in sd.arrInt)
         {
             Globe.askbox.Add(item.Split(','));
+			
         }
         print("loading all level = " + Globe.askbox.Count);
-        //StartCoroutine ("GetTwitterUpdate");     
+//		PlayerPrefs.DeleteAll();
+//        StartCoroutine ("GetTwitterUpdate");     
+//		PlayerPrefs.DeleteKey("GameWindow");
 
-
-        ;
-        //		LitJsonUtil.addNextLevel(3,0);
-        //		print (LitJsonUtil.WriteJson());
-        //		print (Application.dataPath + @"/StreamingAssets/json.txt");
-        ;
     }
 
     IEnumerator GetTwitterUpdate()//IEnumerator
@@ -61,20 +58,10 @@ public class FruitMain : MonoBehaviour
                 for (int j = 1; j <= jarr.Length; j++)
                 {
                     PlayerPrefs.SetInt("star-" + array[i] + j, (int)jarr[j - 1]);
-                    //					print (("star-" + array [i] + j) + "==" + (int)jarr [j-1]);
+//					print (("star-" + array [i] + j) + "==" + (int)jarr [j-1]);
                 }
             }
         }
-
-        /*
-        if(lf["star"].IsArray)
-        {
-            for (int i = 0; i < lf["star"].Count; i++) 
-            {
-                PlayerPrefs.SetInt("star-first"+i,(int)lf["star"][i]);
-            }
-
-        }*/
     }
 
     public static void WriteJson(string path)
