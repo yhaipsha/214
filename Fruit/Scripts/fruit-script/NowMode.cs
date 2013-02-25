@@ -23,7 +23,6 @@ public class NowMode : MonoBehaviour {
                 Caption = "Normal Mode";//"标准模式-看3秒，找出指定水果，限错3次";
                 PlayerPrefs.SetInt("NowMode", 1);
                 break;
-
             case "BtnMiddle":
                 Caption = "Classic Mode";//"经典模式-看5秒找相同水果，限错N次";
                 PlayerPrefs.SetInt("NowMode", 2);
@@ -33,11 +32,10 @@ public class NowMode : MonoBehaviour {
                 PlayerPrefs.SetInt("NowMode", 3);
                 break;
         }
-
+		PlayerPrefs.SetString("NowModeCaption",Caption);
         itemCardLayer();
 
 	}
-
 
     public void itemCardLayer()
 	{

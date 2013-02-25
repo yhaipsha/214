@@ -9,4 +9,5 @@ public class SystemData : ScriptableObject {
 	//
 //	public List<int[]> arrInt;
 	public List<string> arrInt;
+	public List<string> secondInt;
 }

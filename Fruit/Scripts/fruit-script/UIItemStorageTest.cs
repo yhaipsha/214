@@ -95,8 +95,8 @@ public class UIItemStorageTest : MonoBehaviour
 					template.GetComponent<TurnRight2>().enabled=true;
 					
 					//GameObject go = NGUITools.AddChild(gameObject, template);					
-					GameObject go = addGameObject(arrSprites[i]);i++;
-					
+					GameObject go = addGameObject(arrSprites[i]);
+					go.name="player"+i;i++;
 					Transform t = go.transform;
 					t.localPosition = new Vector3(padding + (x + 0.5f) * spacing, -padding - (y + 0.5f) * spacing, 0f);
 

@@ -35,6 +35,7 @@ public class Globe
 	//在游戏中储存卡牌
 	public static int[] box;			//随机数组
 	public static List<string[]> askbox;	//每个关卡数组
+	public static List<string[]> askbox2;	
 	public static List<string> askatlases;//卡牌头
 	public static List<string> cards;		//卡牌
 	public static int findCount;
@@ -42,6 +43,7 @@ public class Globe
 	
 	//public static List<int>sameSize ; //=new List<int>()
 	public static Dictionary<string,int> sameSize;
+	public static Dictionary<string,int> differentSize;
 	public static Dictionary<string,GameObject> stayObject;
 	public static  string[] jsonLableNames = new string[]{"star-first","star-second","star-third"};
 	public static string Compare (int mode)

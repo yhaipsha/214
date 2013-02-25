@@ -11,14 +11,16 @@ public class FruitMain : MonoBehaviour
         yield return www;
         SystemData sd = www.assetBundle.mainAsset as SystemData;
         Globe.askbox = new System.Collections.Generic.List<string[]>();
-
+		Globe.askbox2 = new System.Collections.Generic.List<string[]>();
 
         foreach (string item in sd.arrInt)
-        {
-            Globe.askbox.Add(item.Split(','));
-			
-        }
-        print("loading all level = " + Globe.askbox.Count);
+            Globe.askbox.Add(item.Split(','));			
+
+		foreach (string item in sd.secondInt) 
+			Globe.askbox2.Add(item.Split(','));
+		
+        print("loading... level1 = " + Globe.askbox.Count);
+		print("loading... level2 = " + Globe.askbox2.Count);
 //		PlayerPrefs.DeleteAll();
 //        StartCoroutine ("GetTwitterUpdate");     
 //		PlayerPrefs.DeleteKey("GameWindow");

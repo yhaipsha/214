@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using System.Linq;
 
 public class GameWinLayer : MonoBehaviour
@@ -41,11 +42,34 @@ public class GameWinLayer : MonoBehaviour
 		
 		string lastlevelName = Globe.jsonLableNames[PlayerPrefs.GetInt("NowMode") - 1] + PlayerPrefs.GetInt("NowPlay");
         print("lastLevelName = " + lastlevelName);
+		
+		
+		//保留做好的成绩星
+		if (on) {
+			 foreach( KeyValuePair<string,int> entry in Globe.sameSize)
+            {
+               print(
+                    string.Format("key:{0}\nvalues:{1}\n",
+                                  entry.Key,
+                                  entry.Value
+                                 )
+                );
+            }
+			;
+			
+			PlayerPrefs.SetInt(lastlevelName, 3-Globe.differentSize.Count == 0?1:3-Globe.differentSize.Count);
+		}else
+		{
+			int name = PlayerPrefs.GetInt(lastlevelName);
+			PlayerPrefs.SetInt(lastlevelName, name>0?name:0);
+			print (PlayerPrefs.GetInt(lastlevelName));
+		}
+		Globe.sameSize.Clear();
+		Globe.differentSize.Clear();
 
-        PlayerPrefs.SetInt(lastlevelName, 3-Globe.errorCount);
-		print (PlayerPrefs.GetInt(lastlevelName));
-		Globe.errorCount=0;
 	}
+	
+	
 	void createButtons (string[] prefabs, Transform transFather, GameObject[] panels)
 	{
 //		string[] prefabs = new string[]{"BtnHome","BtnShop","BtnHelp"};	
