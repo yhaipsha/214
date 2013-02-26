@@ -33,15 +33,15 @@ public class NowMode : MonoBehaviour {
                 break;
         }
 		PlayerPrefs.SetString("NowModeCaption",Caption);
-        itemCardLayer();
-
+//        itemCardLayer();
+//		Application.LoadLevelAdditive("Example - FruitLevel");
+		Application.LoadLevel("Game");
 	}
 
     public void itemCardLayer()
 	{
         int maxItem = 0;
         int pages = 1;
-        string Caption = string.Empty;
 
         switch (PlayerPrefs.GetInt("NowMode"))
         {

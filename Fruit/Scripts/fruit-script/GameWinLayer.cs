@@ -51,11 +51,9 @@ public class GameWinLayer : MonoBehaviour
                print(
                     string.Format("key:{0}\nvalues:{1}\n",
                                   entry.Key,
-                                  entry.Value
-                                 )
+                                  entry.Value	)
                 );
             }
-			;
 			
 			PlayerPrefs.SetInt(lastlevelName, 3-Globe.differentSize.Count == 0?1:3-Globe.differentSize.Count);
 		}else
@@ -106,7 +104,7 @@ public class GameWinLayer : MonoBehaviour
 		GamePauseAftermath gp = go.GetComponent<GamePauseAftermath> ();
 			if (gp != null) {
 				gp.transLevelPanel = transLevelPanel;//panels [panels.Length - 1].transform;
-				gp.resetLevel = true;
+//				gp.resetLevel = true;
 				gp.resetPause = false;
 				gp.resetPlay = false;
 				gp.removeCard = true;

@@ -13,6 +13,6 @@ public class SelectedLevel : MonoBehaviour
 		
 		UILabel lblLevelName = GetComponentInChildren<UILabel> ();
 		PlayerPrefs.SetInt ("NowPlay", int.Parse (lblLevelName.text.Trim ()));
-
+//		Application.LoadLevel("Game");
 	}
 }

@@ -16,6 +16,7 @@ public class GamePlayLayer : MonoBehaviour
 	{
 		//		Globe.sameSize = new System.Collections.Generic.Dictionary<string, int> ();
 		//		createButtons ();
+//		OnLayer();
 	}
 
 	public void cleanButtons ()
@@ -40,25 +41,30 @@ public class GamePlayLayer : MonoBehaviour
 		lbl.text = _nowMode + "-" + _nowPlay;
 		
 		lbl = transform.FindChild ("LabelTime").GetComponent<UILabel> ();
-			Transform transFruit = transform.FindChild ("ExampleFruit");
+		Transform transFruit = transform.FindChild ("ExampleFruit");
 		
 		switch (_nowMode) {
 		case 1:
 			lbl.text = "3";
-			createAtlases (Globe.askbox);
 			UISlicedSprite ssp = transFruit.GetComponent<UISlicedSprite> ();
 			ssp.spriteName = Globe.askatlases [Globe.askatlases.Count - 1];//only normal mode
 			print ("look for sprite =" + ssp.spriteName);
 			
+
+
+			createAtlases (Globe.askbox);
+						
+			print ("current level is " + _nowPlay + " from 1 ,and findCount = " + Globe.findCount);
+			
 			break;
 		case 2:
 			lbl.text = "1";//每一个关卡 允许错误次数
-			transFruit.gameObject.SetActive(false);
+			transFruit.gameObject.SetActive (false);
 			createAtlases (Globe.askbox2);
 			break;
 		case 3:
 			lbl.text = "00:30";
-			transFruit.gameObject.SetActive(false);
+			transFruit.gameObject.SetActive (false);
 			break;
 			
 		}
@@ -97,6 +103,12 @@ public class GamePlayLayer : MonoBehaviour
 		}
 	}
 	
+	public void toPanelWin (int score)
+	{
+		GameWinLayer gw = Globe.getPanelOfParent (transform, 1, "Panel - GameWin").GetComponent<GameWinLayer> ();
+		gw.init (score);
+	}
+
 	public void initGameWindow ()
 	{
 		string[] names = Globe.cards.ToArray ();
@@ -122,10 +134,8 @@ public class GamePlayLayer : MonoBehaviour
 
 	void createAtlases (List<string[]> item)
 	{
-		
 		//头图片个数  选取数组最后一个Globe.askbox
 		int maxCard = item [_nowPlay - 1].Length;
-
 		Globe.box = new ArrayRandom (maxCard).NonRepeatArray (1, 16);
 		Globe.cards = new List<string> ();
 		Globe.askatlases = new List<string> ();
@@ -141,10 +151,10 @@ public class GamePlayLayer : MonoBehaviour
 				//				print (temp [k]);
 				Globe.cards.Add (temp [k]);
 			}
-
-			Globe.askatlases.Add ("boxfind" + Globe.box [j]);
+			if (_nowMode == 1) 
+				Globe.askatlases.Add ("boxfind" + Globe.box [j]);
 		}
-		print ("current level is " + _nowPlay + " from 1 ,and findCount = " + Globe.findCount);
+		
 
 	}
 	
@@ -172,22 +182,37 @@ public class GamePlayLayer : MonoBehaviour
 		foreach (string item in names) {
 			str += item + ",";
 		}
-		print (str.Substring (0, str.Length - 1) + " findName = " + Globe.askatlases [Globe.askatlases.Count - 1]);
+		if (_nowMode == 1) 
+			print (str.Substring (0, str.Length - 1) + " findName = " + Globe.askatlases [Globe.askatlases.Count - 1]);
+		
+		
 		UIItemStorageTest ut = transform.FindChild ("GameWindow").GetComponent<UIItemStorageTest> ();
-		ut.maxRows = 4;
-
+		
 		//		Globe.cards.Count
 		if (_nowPlay <= 4) {
 			ut.maxColumns = 3;
+			ut.maxRows = 4;
 			ut.transform.localPosition = Globe.cardPanel1;
 		} else if (_nowPlay > 4 && _nowPlay <= 12) {
 			ut.maxColumns = 5;
+			ut.maxRows = 4;
 			ut.transform.localPosition = Globe.cardPanel2;
-		} else if (_nowPlay > 12) {
+		} else if (_nowPlay > 12 && _nowPlay <= 19) {
 			ut.maxColumns = 6;
+			ut.maxRows = 4;
+			ut.transform.localPosition = Globe.cardPanel3;
+		} else if (_nowPlay > 19 && _nowPlay < 40) {
+			ut.maxColumns = 7;
+			ut.maxRows = 4;
+			ut.spacing = 110;
+			ut.padding = 10;
 			ut.transform.localPosition = Globe.cardPanel3;
 		}
-
+		
+		if (_nowMode == 2) {
+			ut.childrenAutoReverse = true;
+		}
+		
 		if (ut.transform.GetChildCount () == 0) {
 			ut.createTemp (names);
 		} else {
@@ -253,19 +278,19 @@ public class GamePlayLayer : MonoBehaviour
 			item.transPausePanel = transform.FindChild ("PanelPause");
 			switch (item.transform.name) {
 			case "p2BtnLevel":
-				item.resetLevel = false;
+//				item.resetLevel = false;
 				item.resetPause = true;
 				item.resetPlay = false;
 				item.removeCard = true;
 				break;
 			case "p3BtnReplay":
-				item.resetLevel = false;
+//				item.resetLevel = false;
 				item.resetPause = true;
 				item.resetPlay = true;
 				item.removeCard = false;
 				break;
 			case "p4BtnCancel":
-				item.resetLevel = false;
+//				item.resetLevel = false;
 				item.resetPause = true;
 				item.resetPlay = false;
 				item.removeCard = false;

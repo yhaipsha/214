@@ -17,8 +17,6 @@ public class UIItemStorageTest : MonoBehaviour
 	/// Maximum size of the container. Adding more items than this number will not work.
 	/// </summary>
 
-
-
 	/// <summary>
 	/// Maximum number of rows to create.
 	/// </summary>
@@ -41,7 +39,7 @@ public class UIItemStorageTest : MonoBehaviour
 	/// Background widget to scale after the item slots have been created.
 	/// </summary>
 
-	public UIWidget background;
+	public bool childrenAutoReverse = true;
 
 	/// <summary>
 	/// Spacing between icons.
@@ -60,7 +58,7 @@ public class UIItemStorageTest : MonoBehaviour
 
 
 	void Start ()
-	{
+	{		
 		//createTemp();
 		
 	}
@@ -70,10 +68,11 @@ public class UIItemStorageTest : MonoBehaviour
 		tempObj.transform.parent = transform;
 		tempObj.transform.localScale = new Vector3 (1f, 1f, 1f);
 //		print ("in the test ="+spriteName);
+		tempObj.GetComponent<TurnRight2>().autoReverse = childrenAutoReverse;
+		
 		UISlicedSprite sprite = tempObj.transform.FindChild("Sprite-box").GetComponent<UISlicedSprite> ();			
 		sprite.transform.rotation = Quaternion.Euler (0f, 180f, 0f);
-		sprite.spriteName = spriteName;
-		
+		sprite.spriteName = spriteName;		
 		sprite.MakePixelPerfect ();
 		
 		return tempObj;
@@ -105,17 +104,10 @@ public class UIItemStorageTest : MonoBehaviour
 
 					if (++count >= arrSprites.Length)
 					{
-						if (background != null)
-						{
-							background.transform.localScale = b.size;
-						}
 						return;
 					}
 				}
 			}
-//			TurnRight2[] tr = transform.GetComponentsInChildren<TurnRight2>();
-			
-			if (background != null) background.transform.localScale = b.size;
 		}
 	}
 	

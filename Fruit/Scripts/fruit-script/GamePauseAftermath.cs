@@ -16,7 +16,7 @@ public class GamePauseAftermath : MonoBehaviour
 	public Transform transPausePanel;
 	public bool resetPause = true;
 	public bool resetPlay = true;
-	public bool resetLevel = true;
+//	public bool resetLevel = true;
 	public bool removeCard = false;
 
 	void OnClick ()
@@ -27,8 +27,8 @@ public class GamePauseAftermath : MonoBehaviour
 		if (removeCard)
 			gp.removeCards();
 		
-		if (resetLevel)
-			cleanLevel (transLevelPanel);		
+//		if (resetLevel)
+//			cleanLevel (transLevelPanel);		
 		if (resetPause && transPausePanel != null)
 			resetPanelPause ();
 	}

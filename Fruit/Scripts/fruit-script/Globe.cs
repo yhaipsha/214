@@ -26,6 +26,7 @@ public class Globe
 	public static Vector3 cardPanel1 = new Vector3 (-256f, 128f, -0.5f);
 	public static Vector3 cardPanel2 = new Vector3 (-330f, 128f, -0.5f);
 	public static Vector3 cardPanel3 = new Vector3 (-410f, 128f, -0.5f);
+	public static Vector3 cardPanel4 = new Vector3 (-410f, 220f, -0.5f);//220
 	//随机分配卡牌
 	public static string[] boxes = {"boxfind1","boxfind2","boxfind3","boxfind4"
 		,"boxfind5","boxfind6","boxfind7","boxfind8"
@@ -36,10 +37,11 @@ public class Globe
 	public static int[] box;			//随机数组
 	public static List<string[]> askbox;	//每个关卡数组
 	public static List<string[]> askbox2;	
-	public static List<string> askatlases;//卡牌头
+	public static List<string> askatlases;//卡牌头 && lastSprite
 	public static List<string> cards;		//卡牌
 	public static int findCount;
 	public static int errorCount=0;
+	public static List<GameObject> tempGameObject;
 	
 	//public static List<int>sameSize ; //=new List<int>()
 	public static Dictionary<string,int> sameSize;

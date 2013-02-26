@@ -20,9 +20,6 @@ public class UIItemCard : MonoBehaviour
     bool _isBounds = false;
     bool _firstSwitch = true;
     public string[] atlasSpriteNames;
-    public delegate void replaceSprite();
-
-    public event replaceSprite EventReplace;
 
 
     /// <summary>

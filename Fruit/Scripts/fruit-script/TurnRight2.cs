@@ -34,7 +34,7 @@ public class TurnRight2 : MonoBehaviour
 		target = GameObject.FindWithTag ("Player");
 		Globe.sameSize = new System.Collections.Generic.Dictionary<string, int> ();
 		Globe.differentSize = new System.Collections.Generic.Dictionary<string, int> ();
-		
+		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject>();
 		if (target != null) {
 			ExampleAtlas ra = target.transform.GetComponent<ExampleAtlas> ();
 			ra.EventReplace += new ExampleAtlas.replaceSprite (OnClick);
@@ -120,6 +120,16 @@ public class TurnRight2 : MonoBehaviour
 		yield return new  WaitForSeconds(Time.deltaTime *114.0f);		
 	}
 
+	public void Turn ()
+	{
+		isBegin = true;
+		qua = Quaternion.Euler (0f, 180f, 0f) * sprite.transform.localRotation;
+		quaBg = Quaternion.Euler (0f, 180f, 0f) * spriteBg.transform.localRotation;
+		
+		spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg, Time.deltaTime);   
+		sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua, Time.deltaTime);    
+	}
+
 	void OnClick ()
 	{		
 		++clickCount;
@@ -128,23 +138,21 @@ public class TurnRight2 : MonoBehaviour
 			isBegin = true;
 			qua = Quaternion.Euler (0f, 180f, 0f) * sprite.transform.localRotation;
 			quaBg = Quaternion.Euler (0f, 180f, 0f) * spriteBg.transform.localRotation;
-
 			
-			string theNumber = RegexUtil.RemoveNotNumber (sprite.spriteName);
-			
-			/**/
 			switch (PlayerPrefs.GetInt ("NowMode")) {
 			case 1:
-				mode1 (theNumber);
+				mode1 ();
 				break;
 			case 2:
+				mode2 ();
 				break;
 			}
 		}
 	}
 
-	void mode1 (string theNumber)
+	void mode1 ()
 	{//"标准模式-看3秒，找出指定水果，限错3次";
+		string theNumber = RegexUtil.RemoveNotNumber (sprite.spriteName);
 		string head = RegexUtil.RemoveNotNumber (spHead.spriteName);
 		if (head == theNumber) {
 			//signName = "Right";
@@ -175,7 +183,6 @@ public class TurnRight2 : MonoBehaviour
 			} else {				
 					
 				transform.parent.parent.FindChild ("LabelTime").GetComponent<UILabel> ().text = (3 - Globe.differentSize.Count).ToString ();
-//                    print(Globe.differentSize.Count);
 				if (Globe.differentSize.Count >= 3) {
 					ra.toPanelWin (0);
 				}
@@ -184,9 +191,52 @@ public class TurnRight2 : MonoBehaviour
 		}
 	}
 
+	private GameObject lastGo;
+
 	void mode2 ()
 	{//经典模式-看5秒找相同水果，限错N次";
+
+		if (Globe.askatlases.Count >0 && Globe.thisPanel  != null && Globe.askatlases[0] != transform.name) {
+			
+			UISprite ltsp = Globe.thisPanel.FindChild ("Sprite-box").GetComponent<UISprite> ();
+			UISprite tsp = transform.FindChild ("Sprite-box").GetComponent<UISprite> ();
 		
+			print (ltsp.spriteName + "?" + tsp.spriteName);
+			if (ltsp.spriteName == tsp.spriteName) {
+				playReplace ();
+				Destroy (Globe.thisPanel.gameObject);
+				Destroy (gameObject);
+				Globe.askatlases.Clear();
+			} else {
+				;
+//				StartCoroutine(show());
+				Globe.thisPanel.gameObject.GetComponent<TurnRight2> ().Turn ();
+//				this.OnClick();
+			}
+			
+			Globe.thisPanel=null;
+			Globe.askatlases.Clear();
+			
+		}else
+		
+		if (!Globe.askatlases.Contains (transform.name) ){
+			Globe.askatlases.Add (transform.name);
+//			print(Globe.thisPanel+"?");
+			Globe.thisPanel = transform;
+//			lastGo = gameObject;
+			print (transform.name);
+			autoReverse=false;
+		}
+		
+		if(transform.parent.GetChildCount()<=0)
+		{
+			print ("----------");
+			//transform.parent.parent
+			GameWinLayer gw = Globe.getPanelOfParent(transform.parent.parent,1,"Panel - GameWin").GetComponent<GameWinLayer>();
+			gw.init(1);
+			
+		}
+			
 	}
 
 	void mode3 ()
