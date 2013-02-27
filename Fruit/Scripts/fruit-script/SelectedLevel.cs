@@ -7,7 +7,7 @@ public class SelectedLevel : MonoBehaviour
 	//初始化游戏页面 
 	
 	
-	public GameObject exampleFruit;
+
 	void OnClick ()
 	{
 		

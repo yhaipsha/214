@@ -32,46 +32,56 @@ public class GamePlayLayer : MonoBehaviour
 
 	void OnLayer ()
 	{
-		//当前关卡
+		
+		
+		//-----------当前关卡
 		_nowPlay = PlayerPrefs.GetInt ("NowPlay");
 		_nowMode = PlayerPrefs.GetInt ("NowMode");
-		print ("current Level is " + _nowPlay + "current Mode is " + _nowMode);
+		print ("current Level is " + _nowPlay + "; current Mode is " + _nowMode);
 		
-		UILabel lbl = transform.FindChild ("LabelShow").GetComponent<UILabel> ();
-		lbl.text = _nowMode + "-" + _nowPlay;
-		
-		lbl = transform.FindChild ("LabelTime").GetComponent<UILabel> ();
-		Transform transFruit = transform.FindChild ("ExampleFruit");
-		
+//		Transform transFruit = transform.FindChild ("ExampleFruit");
+		string time = string.Empty;
 		switch (_nowMode) {
 		case 1:
-			lbl.text = "3";
-			UISlicedSprite ssp = transFruit.GetComponent<UISlicedSprite> ();
-			ssp.spriteName = Globe.askatlases [Globe.askatlases.Count - 1];//only normal mode
-			print ("look for sprite =" + ssp.spriteName);
-			
-
-
-			createAtlases (Globe.askbox);
-						
-			print ("current level is " + _nowPlay + " from 1 ,and findCount = " + Globe.findCount);
-			
+			time = "3";			
+			createAtlases (Globe.askbox);						
+			print ("current level is " + _nowPlay + " from 1 ,and findCount = " + Globe.findCount);			
 			break;
 		case 2:
-			lbl.text = "1";//每一个关卡 允许错误次数
-			transFruit.gameObject.SetActive (false);
+			time = "1";//每一个关卡 允许错误次数
 			createAtlases (Globe.askbox2);
 			break;
 		case 3:
-			lbl.text = "00:30";
-			transFruit.gameObject.SetActive (false);
+			time = "00:30";
+			
 			break;
 			
 		}
-		
+		initTitle(time);
+		initStar ();		
 		initGameWindow ();
 		createButtons ();
-		initStar ();
+	}
+
+	void initTitle (string time)
+	{
+		Transform transTitle = transform.FindChild ("PanelTitle");
+	
+		UILabel lbl = transTitle.FindChild ("LabelShow").GetComponent<UILabel> ();
+		lbl.text = _nowMode + "-" + _nowPlay;			
+		lbl = transTitle.FindChild ("LabelTime").GetComponent<UILabel> ();
+		lbl.text = time;
+		
+		Transform transFruit = transTitle.FindChild ("ExampleFruit");
+		if (_nowMode == 1) {
+		UISlicedSprite ssp = transFruit.GetComponent<UISlicedSprite> ();
+		ssp.spriteName = Globe.askatlases [Globe.askatlases.Count - 1];//only normal mode
+		print ("look for sprite =" + ssp.spriteName);
+					
+		}else
+		{
+			transFruit.gameObject.SetActive (false);
+		}
 	}
 
 	public GameObject go;
@@ -81,25 +91,14 @@ public class GamePlayLayer : MonoBehaviour
 		string tmp = Globe.Compare (_nowMode) + _nowPlay;
 		if (go != null) {
 			Transform transStar = transform.FindChild ("PanelStar");
+
 			
 			for (int i = 0; i < transStar.GetChildCount(); i++) {
 				transStar.GetChild (i).gameObject.SetActive (false);
 			}
 			for (int i = 0; i < PlayerPrefs.GetInt (tmp); i++) {
 				transStar.GetChild (i).gameObject.SetActive (true);
-			}
-		
-//			if (PlayerPrefs.GetInt (tmp) > 0 && go != null) {
-//				for (int i = 0; i < PlayerPrefs.GetInt(tmp); i++) {
-//					GameObject tempObj = (GameObject)Instantiate (go);
-//					tempObj.transform.parent = transStar;
-//					tempObj.transform.localScale = new Vector3 (36f, 40f, 1f);
-//					tempObj.transform.localPosition = new Vector3 (0f, 0f, -1f);
-//				}
-				
-//			}
-//			addGrid (transStar.gameObject, 60);
-			
+			}			
 		}
 	}
 	
@@ -111,6 +110,7 @@ public class GamePlayLayer : MonoBehaviour
 
 	public void initGameWindow ()
 	{
+		PlayerPrefs.DeleteKey ("cardReady");
 		string[] names = Globe.cards.ToArray ();
 		ArrayRandom.FillRandomArray (ref names);
 		DecorateGamePlay (names);
@@ -185,8 +185,8 @@ public class GamePlayLayer : MonoBehaviour
 		if (_nowMode == 1) 
 			print (str.Substring (0, str.Length - 1) + " findName = " + Globe.askatlases [Globe.askatlases.Count - 1]);
 		
-		
-		UIItemStorageTest ut = transform.FindChild ("GameWindow").GetComponent<UIItemStorageTest> ();
+		Transform transGameWindow = transform.FindChild ("GameWindow");
+		UIItemStorageTest ut = transGameWindow.GetComponent<UIItemStorageTest> ();
 		
 		//		Globe.cards.Count
 		if (_nowPlay <= 4) {
@@ -220,6 +220,7 @@ public class GamePlayLayer : MonoBehaviour
 			ut.createTemp (names);
 		}
 		PlayerPrefs.SetInt ("cardReady", 1);
+		transGameWindow.GetComponent<TurnManager>().init();
 
 		//		else if (PlayerPrefs.GetInt ("PanelGamePlay") == -1) {
 		//			//中途退出
@@ -344,6 +345,7 @@ public class GamePlayLayer : MonoBehaviour
 	{
 		//清理卡牌
 		transform.FindChild ("GameWindow").GetComponent<UIItemStorageTest> ().cleaner ();//PanelPause		
+		
 	}
 
 

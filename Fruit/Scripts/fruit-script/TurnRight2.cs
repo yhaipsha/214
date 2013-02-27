@@ -20,8 +20,10 @@ public class TurnRight2 : MonoBehaviour
 	private GameObject target;
 	private bool isBegin = false;
 	public bool autoReverse = false;
+	bool isRotation = false;
 	int clickCount = 0;
 	Vector3 Correct = Vector3.zero;
+	Vector3 NotCorrect = Vector3.zero;
 	int font = 0;
 	Quaternion qua;
 	Quaternion quaBg;
@@ -34,7 +36,7 @@ public class TurnRight2 : MonoBehaviour
 		target = GameObject.FindWithTag ("Player");
 		Globe.sameSize = new System.Collections.Generic.Dictionary<string, int> ();
 		Globe.differentSize = new System.Collections.Generic.Dictionary<string, int> ();
-		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject>();
+		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject> ();
 		if (target != null) {
 			ExampleAtlas ra = target.transform.GetComponent<ExampleAtlas> ();
 			ra.EventReplace += new ExampleAtlas.replaceSprite (OnClick);
@@ -42,34 +44,42 @@ public class TurnRight2 : MonoBehaviour
 		}
 	}
 
-	void LateUpdate2 ()
+	void LateUpdate ()
 	{
 		if (PlayerPrefs.GetInt ("cardReady") == 2) {
-			waitSecond3 ();
+//			qua = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;	
+//			quaBg = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;
+			
+			qua = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;	
+			quaBg = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;				
 			StartCoroutine (show ());
-			PlayerPrefs.DeleteKey ("cardReady");
+//			PlayerPrefs.DeleteKey ("cardReady");
 		}
 	}
 
 	void Update ()
 	{
+
 		if (PlayerPrefs.GetInt ("cardReady") == 1) {
+			qua = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;	
+			quaBg = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;
+			
 			StartCoroutine (show ());
 			//PlayerPrefs.SetInt("cardReady",2);
 		}
       
-		if (isBegin) {
-
-			spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg, Time.deltaTime * 3);
-			sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua, Time.deltaTime * 3);
-
-			float vEuler = Mathf.Round (spriteBg.transform.rotation.eulerAngles.y);
-			//反面
-			IsNotCorrect (vEuler);
-			//正面
-			IsCorrect (vEuler);
-
-		}
+//		if (isBegin) {
+//
+//			spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg, Time.deltaTime * 3);
+//			sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua, Time.deltaTime * 3);
+//
+//			float vEuler = Mathf.Round (spriteBg.transform.rotation.eulerAngles.y);
+//			//反面
+//			IsNotCorrect (vEuler);
+//			//正面
+//			IsCorrect (vEuler);
+//
+//		}
 		/*
         if(Input.GetMouseButtonDown(0))
         {
@@ -94,27 +104,93 @@ public class TurnRight2 : MonoBehaviour
 	}
 
 	IEnumerator show ()
-	{
-		qua = Quaternion.Euler (Correct) * sprite.transform.localRotation;	
-		quaBg = Quaternion.Euler (Correct) * spriteBg.transform.localRotation;
-					
-		spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg, Time.deltaTime);   
+	{				
 		sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua, Time.deltaTime);     		
+		spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg, Time.deltaTime);   
 		
-		float vEuler = Mathf.Round (spriteBg.transform.rotation.eulerAngles.y);
-		//反面
-		IsNotCorrect (vEuler);
-		//正面
-		IsCorrect (vEuler);
+//		print ("cardReady=" + PlayerPrefs.GetInt ("cardReady"));
+		
+		if (PlayerPrefs.GetInt ("cardReady") == 1) {
+			bool correct = IsCorrect (Mathf.Round (sprite.transform.rotation.eulerAngles.y));
+			if (correct) {				
+				PlayerPrefs.SetInt ("cardReady", 2);
+				print ("in the correct =if");
+//				yield return null;  
+//				yield return new  WaitForSeconds(Time.deltaTime * 30f);				
+				yield return new WaitForSeconds(5.0F);
+			}			
+		} else if (PlayerPrefs.GetInt ("cardReady") == 2) {
+			yield return new WaitForSeconds(5.0F);
+
+			//反面
+			bool correct = IsNotCorrect (Mathf.Round (spriteBg.transform.rotation.eulerAngles.y));
+			if (correct) {				
+				PlayerPrefs.DeleteKey ("cardReady");
+				print ("in the correct =else");
+				yield return null;  
+			}		
+		}
+			
+		
+//		//正面
 		float timeD = Time.deltaTime * 57f;
-		yield return  new WaitForSeconds(timeD);		
+//		print (timeD);return false;
+		
+
 //		print (font+"<<>>"+Correct);
 //		print(timeD+		"|WaitForSeconds" + Time.time);
-		if (Time.time - timeD >= 3 && PlayerPrefs.GetInt ("cardReady") == 1) {
-			PlayerPrefs.SetInt ("cardReady", 2);
-		}	
+//		
+//		if (Time.time - timeD >= 3 && PlayerPrefs.GetInt ("cardReady") == 1) {
+//			print ("in the Time=if");
+//			PlayerPrefs.SetInt ("cardReady", 2);
+//		} 
+		/*else if (Time.time - timeD >= 3 && PlayerPrefs.GetInt ("cardReady") == 2) {
+			print ("in the Time=else");
+			PlayerPrefs.DeleteKey ("cardReady");
+		}*/
+		
+		yield return  new WaitForSeconds(timeD);		
+	}
+
+	bool IsNotCorrect (float euler)
+	{
+		print (euler);
+//		if (euler ==0) {
+//			return false;
+//		}
+		if (270 < euler && euler < 360) {
+			spriteBg.enabled = false;
+			sprite.enabled = true;
+		} else if (195 < euler && euler < 270) {
+			spriteBg.enabled = true;
+			sprite.enabled = false;
+			
+		} else if (180 < euler && euler < 195) {
+			return true;
+		}		
+		return false;
+		
 	}
 	
+	bool IsCorrect (float euler)
+	{
+		//做减法运算,默认已经旋转180
+//		print (euler);
+		if (euler > 300) {
+			return true;
+		}
+		if (90 < euler && euler < 180) {			
+			spriteBg.enabled = true;
+			sprite.enabled = false;
+		} else if (5 < euler && euler < 90) {
+			spriteBg.enabled = false;
+			sprite.enabled = true;
+		} else if (0 < euler && euler < 5) {
+			return isBegin = true;
+		}
+		return false;		
+	}
+
 	IEnumerator showWait3 ()
 	{
 		yield return new  WaitForSeconds(Time.deltaTime *114.0f);		
@@ -182,7 +258,7 @@ public class TurnRight2 : MonoBehaviour
 				ra.NextSprite (spHead.spriteName);
 			} else {				
 					
-				transform.parent.parent.FindChild ("LabelTime").GetComponent<UILabel> ().text = (3 - Globe.differentSize.Count).ToString ();
+//				transform.parent.parent.FindChild ("LabelTime").GetComponent<UILabel> ().text = (3 - Globe.differentSize.Count).ToString ();
 				if (Globe.differentSize.Count >= 3) {
 					ra.toPanelWin (0);
 				}
@@ -196,7 +272,7 @@ public class TurnRight2 : MonoBehaviour
 	void mode2 ()
 	{//经典模式-看5秒找相同水果，限错N次";
 
-		if (Globe.askatlases.Count >0 && Globe.thisPanel  != null && Globe.askatlases[0] != transform.name) {
+		if (Globe.askatlases.Count > 0 && Globe.thisPanel != null && Globe.askatlases [0] != transform.name) {
 			
 			UISprite ltsp = Globe.thisPanel.FindChild ("Sprite-box").GetComponent<UISprite> ();
 			UISprite tsp = transform.FindChild ("Sprite-box").GetComponent<UISprite> ();
@@ -206,7 +282,7 @@ public class TurnRight2 : MonoBehaviour
 				playReplace ();
 				Destroy (Globe.thisPanel.gameObject);
 				Destroy (gameObject);
-				Globe.askatlases.Clear();
+				Globe.askatlases.Clear ();
 			} else {
 				;
 //				StartCoroutine(show());
@@ -214,26 +290,23 @@ public class TurnRight2 : MonoBehaviour
 //				this.OnClick();
 			}
 			
-			Globe.thisPanel=null;
-			Globe.askatlases.Clear();
+			Globe.thisPanel = null;
+			Globe.askatlases.Clear ();
 			
-		}else
-		
-		if (!Globe.askatlases.Contains (transform.name) ){
+		} else if (!Globe.askatlases.Contains (transform.name)) {
 			Globe.askatlases.Add (transform.name);
 //			print(Globe.thisPanel+"?");
 			Globe.thisPanel = transform;
 //			lastGo = gameObject;
 			print (transform.name);
-			autoReverse=false;
+			autoReverse = false;
 		}
 		
-		if(transform.parent.GetChildCount()<=0)
-		{
+		if (transform.parent.GetChildCount () <= 0) {
 			print ("----------");
 			//transform.parent.parent
-			GameWinLayer gw = Globe.getPanelOfParent(transform.parent.parent,1,"Panel - GameWin").GetComponent<GameWinLayer>();
-			gw.init(1);
+			GameWinLayer gw = Globe.getPanelOfParent (transform.parent.parent, 1, "Panel - GameWin").GetComponent<GameWinLayer> ();
+			gw.init (1);
 			
 		}
 			
@@ -253,54 +326,5 @@ public class TurnRight2 : MonoBehaviour
 		//		ra.NextSprite(sp.spriteName);
 	}
 	
-	void IsNotCorrect (float euler)
-	{
-		if (0 < euler && euler < 180) {
-			if (0 < euler && euler < 90) {
-				//isBegin=false;
-				spriteBg.enabled = true;
-				sprite.enabled = false;
-			}
-			if (euler > 90) {					
-				if (autoReverse && clickCount != 0) {
-					this.OnClick ();
-					
-				} else {
-					//spriteBg.alpha=1f;			
-					spriteBg.enabled = false;
-					sprite.enabled = true;
-				}
-				isBegin = true;
-			}
-			
-			clickCount = 0;	
-			//isCorrect=false;
-		}
-	}
-	
-	void IsCorrect (float euler)
-	{
-		if (180 < euler && euler < 360) {				
-			if (180 < euler && euler < 270) {
-				//转过270度角
-				//spriteBg.alpha=1f;			
-				spriteBg.enabled = false;
-				sprite.enabled = true;
-			}
-			if (euler > 270) {
-				if (autoReverse && clickCount != 0) {
-					this.OnClick ();
-					
-				} else {
-					spriteBg.enabled = true;
-					sprite.enabled = false;
-				}
-				//isBegin=false;
-					
 
-
-			}
-
-		}
-	}
 }

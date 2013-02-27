@@ -82,9 +82,9 @@ public class ExampleAtlas : MonoBehaviour
 //		print(LitJsonUtil.readAll(Globe.jsonURL.Replace("file://",""), 0));
         ;
 
-		transform.parent.GetComponent<TweenPosition> ().Reset();				
-		nextLayer.GetComponent<TweenPosition> ().Play (true);
+		transform.parent.parent.GetComponent<TweenPosition> ().Reset();	
 		
+		nextLayer.GetComponent<TweenPosition> ().Play (true);		
 		nextLayer.GetComponent<GameWinLayer>().init(result);
 
 	}

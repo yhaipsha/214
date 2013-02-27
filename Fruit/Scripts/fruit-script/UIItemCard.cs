@@ -93,8 +93,8 @@ public class UIItemCard : MonoBehaviour
             bt.trigger = AnimationOrTween.Trigger.OnClick;
             bt.playDirection = AnimationOrTween.Direction.Forward;
 
-            SelectedLevel com = tempObj.AddComponent("SelectedLevel") as SelectedLevel;
-            com.exampleFruit = target.FindChild("ExampleFruit").gameObject;
+            tempObj.AddComponent("SelectedLevel");
+            
 
 
         }
