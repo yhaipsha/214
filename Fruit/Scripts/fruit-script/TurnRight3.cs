@@ -1,11 +1,17 @@
 using UnityEngine;
 using System.Collections;
 
-public class TurnRight2 : MonoBehaviour
+public class TurnRight3 : MonoBehaviour
 {
 	/// <summary>
 	/// 绕sprite中心左右旋转
 	/// </summary>
+	
+//	public delegate void deleEnemyDie();
+//	public event deleEnemyDie EvenEnemyDie;
+	public delegate void clicked (string name) ;
+
+	public event clicked eventClicked;
 	
 	public UISprite sprite;
 	public UISprite spriteBg;
@@ -24,11 +30,9 @@ public class TurnRight2 : MonoBehaviour
 	{		
 		sprite.enabled = false;
 		target = GameObject.FindWithTag ("Player");
-		
 		Globe.sameSize = new System.Collections.Generic.Dictionary<string, int> ();
 		Globe.differentSize = new System.Collections.Generic.Dictionary<string, int> ();
 		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject> ();
-		
 		if (target != null) {
 			ExampleAtlas ra = target.transform.GetComponent<ExampleAtlas> ();
 			ra.EventReplace += new ExampleAtlas.replaceSprite (OnClick);
@@ -38,10 +42,14 @@ public class TurnRight2 : MonoBehaviour
 
 	void LateUpdate ()
 	{
-		if (PlayerPrefs.GetInt ("cardReady") == 2) {		
-//			qua = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;	
-//			quaBg = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;				
-//			StartCoroutine (show ());
+		if (PlayerPrefs.GetInt ("cardReady") == 2) {
+//			qua = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;	
+//			quaBg = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;
+			
+			qua = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;	
+			quaBg = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;				
+			StartCoroutine (show ());
+//			PlayerPrefs.DeleteKey ("cardReady");
 		}
 	}
 
@@ -49,10 +57,11 @@ public class TurnRight2 : MonoBehaviour
 	{
 
 		if (PlayerPrefs.GetInt ("cardReady") == 1) {
-//			qua = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;	
-//			quaBg = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;			
-//			StartCoroutine (show ());
-
+			qua = Quaternion.Euler (new Vector3 (0f, 180f, 0f)) * sprite.transform.localRotation;	
+			quaBg = Quaternion.Euler (Vector3.zero) * spriteBg.transform.localRotation;
+			
+			StartCoroutine (show ());
+			//PlayerPrefs.SetInt("cardReady",2);
 		}
       
 //		if (isBegin) {
@@ -67,7 +76,22 @@ public class TurnRight2 : MonoBehaviour
 //			IsCorrect (Mathf.Round (sprite.transform.rotation.eulerAngles.y));
 //
 //		}
-		
+		/*
+        if(Input.GetMouseButtonDown(0))
+        {
+            Ray r= Camera.mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(r.origin,r.direction,out hit))
+            {
+                print (hit.transform.name+"||"+hit.distance);
+//				if(hit.transform.name=="TextMesh")
+//				{
+//					Application.LoadLevel("t1");
+//				}
+            }
+        }
+		*/
+
 	}
 	void OnClick ()
 	{		
@@ -94,13 +118,17 @@ public class TurnRight2 : MonoBehaviour
 		string theNumber = RegexUtil.RemoveNotNumber (sprite.spriteName);
 		string head = RegexUtil.RemoveNotNumber (spHead.spriteName);
 		if (head == theNumber) {
-			//signName = "Right";				
+			//signName = "Right";
+				
 			if (Globe.sameSize.ContainsKey (spHead.spriteName)) {
 				Globe.sameSize [spHead.spriteName]++;
 			} else
 				Globe.sameSize.Add (spHead.spriteName, 1);
+				
+				
 		} else {
-			//signName = "Wrong";				
+			//signName = "Wrong";
+				
 			if (Globe.differentSize.ContainsKey (transform.name)) {
 				Globe.differentSize [transform.name]++;
 			} else
@@ -113,10 +141,11 @@ public class TurnRight2 : MonoBehaviour
 			if (head == theNumber) {
 				StartCoroutine (playReplace ());
 				autoReverse = false;
+//					SendMessageUpwards("NextSprite",spHead.spriteName);
 				ra.NextSprite (spHead.spriteName);
 			} else {				
 					
-				SendMessageUpwards("UpdateTime",3-Globe.differentSize.Count);				
+//				transform.parent.parent.FindChild ("LabelTime").GetComponent<UILabel> ().text = (3 - Globe.differentSize.Count).ToString ();
 				if (Globe.differentSize.Count >= 3) {
 					ra.toPanelWin (0);
 				}
@@ -151,13 +180,16 @@ public class TurnRight2 : MonoBehaviour
 		} else if (!Globe.askatlases.Contains (transform.name)) {
 			//记录上次精灵
 			Globe.askatlases.Add (transform.name);
+//			print(Globe.thisPanel+"?");
 			Globe.thisPanel = transform;
+//			lastGo = gameObject;
 			print (transform.name);
 			autoReverse = false;
 		}
 		
 		if (transform.parent.GetChildCount () <= 0) {
 			print ("----------");
+			//transform.parent.parent
 			GameWinLayer gw = Globe.getPanelOfParent (transform.parent.parent, 1, "Panel - GameWin").GetComponent<GameWinLayer> ();
 			gw.init (1);
 			
@@ -175,6 +207,8 @@ public class TurnRight2 : MonoBehaviour
 		sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua, Time.deltaTime);     		
 		spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg, Time.deltaTime);   
 		
+//		print ("cardReady=" + PlayerPrefs.GetInt ("cardReady"));
+		
 		if (PlayerPrefs.GetInt ("cardReady") == 1) {
 			bool correct = IsCorrect (Mathf.Round (sprite.transform.rotation.eulerAngles.y));
 			if (correct) {				
@@ -186,7 +220,8 @@ public class TurnRight2 : MonoBehaviour
 			}
 			
 		} else if (PlayerPrefs.GetInt ("cardReady") == 2) {
-						
+			
+			
 			//反面
 			bool correct = IsNotCorrect (Mathf.Round (spriteBg.transform.rotation.eulerAngles.y));
 			if (correct) {				
@@ -199,9 +234,9 @@ public class TurnRight2 : MonoBehaviour
 			}		
 		}
 			
-		/*
+		
 //		//正面
-		float timeD = Time.deltaTime * 57f;
+//		float timeD = Time.deltaTime * 114f;
 //		print (timeD);return false;
 		
 
@@ -212,7 +247,7 @@ public class TurnRight2 : MonoBehaviour
 //			print ("in the Time=if");
 //			PlayerPrefs.SetInt ("cardReady", 2);
 //		} 
-		else if (Time.time - timeD >= 3 && PlayerPrefs.GetInt ("cardReady") == 2) {
+		/*else if (Time.time - timeD >= 3 && PlayerPrefs.GetInt ("cardReady") == 2) {
 			print ("in the Time=else");
 			PlayerPrefs.DeleteKey ("cardReady");
 		}*/

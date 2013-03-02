@@ -1,99 +1,259 @@
 using UnityEngine;
 using System.Collections;
 
-public class TurnManager : MonoBehaviour {
+public delegate void ProcessDelegate (object sender,string e);
+
+public delegate string animatePlayOver (string animateName);
+
+public class TurnManager : MonoBehaviour
+{	
+	public delegate void diePunish (string lname,string name);
 	
-	private bool isBegin = false;
+	public Transform transExample;
+	public Transform transTimes;
+	public Transform transLable;
+	int initialized = 0;
+	UISlicedSprite spHead;
+	ExampleAtlas examObj;
+	float backTime;//用于计数的变量
+	
+	private bool autoReverse=false;
 	int clickCount = 0;
+	private bool isBegin = false;
 	Quaternion qua;
 	Quaternion quaBg;
-	
-	public bool autoReverse = false;
 	UISprite sprite;
 	UISprite spriteBg;
-	bool beginTurn=false;
-	// Use this for initialization
-	void Start () {
-	
+	bool beginTurn = false;
+	bool punish = false;
+	TurnAnimate ta;
+
+	void doPunish (string name)
+	{
+		print (name + "?" + Globe.tmpString);
+		if (name != Globe.tmpString) {
+			Destroy (getTransOfSprite (name).gameObject);	
+			Destroy (getTransOfSprite (Globe.tmpString).gameObject);				
+			Globe.tmpString = null;
+			Globe.punish = false;
+		}
+		if (transform.GetChildCount () <= 2) {
+			transExample.GetComponent<ExampleAtlas> ().toPanelWin (1);
+		}
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (PlayerPrefs.GetInt ("cardReady") == 7 && beginTurn == true) {
-						qua = Quaternion.Euler (new Vector3 (0f, 180f, 0f));	
-			quaBg = Quaternion.Euler (Vector3.zero);
+
+	void Start ()
+	{					
+		
+		Globe.sameSize = new System.Collections.Generic.Dictionary<string, int> ();
+//		Globe.differentSize = new System.Collections.Generic.Dictionary<string, int> ();
+//		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject> ();
+		
+		if (transExample != null) {
+			examObj = transExample.GetComponent<ExampleAtlas> ();
+			examObj.EventReplace += new ExampleAtlas.replaceSprite (appriseExam);
+			spHead = transExample.GetComponent<UISlicedSprite> ();	
+		}
+	}
+
+	void Update ()
+	{
+		if (initialized == 2 && PlayerPrefs.GetInt ("NowMode") != 3) {			
+			initialized = 0;
+			examPlay ();	
+			init (2);
+			PlayerPrefs.DeleteKey ("cardReady");
+		}
+		
+		if (initialized == 2 && PlayerPrefs.GetInt ("NowMode") == 3) {
+//			print (backTime.ToString ("F0"));//每帧都更新时间变化，F0表示小数点后显示0位，如果你需要可以改变0为相应的位数！		
+			backTime = backTime - Time.deltaTime;//总时间i减去每帧消耗的时间，当然就等于当前时间啦，对吧？
+			transTimes.GetComponent<UILabel> ().text ="0:"+ backTime.ToString ("F0");	
 			
-			StartCoroutine (show ());
-			//PlayerPrefs.SetInt("cardReady",2);
+			if(backTime>29.0f){
+				init (2);
+				PlayerPrefs.DeleteKey ("cardReady");
+			}else if(backTime<=0.0f)
+			{
+				examObj.toPanelWin (0);
+			}
 		}
 		
 		
-//		if (isBegin) {
-//	
-//				spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg, Time.deltaTime * 3);
-//				sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua, Time.deltaTime * 3);
-//	
-//				float vEuler = Mathf.Round (spriteBg.transform.rotation.eulerAngles.y);
-//				//反面
-//				IsNotCorrect (vEuler);
-//				//正面
-//				IsCorrect (vEuler);
-//	
-//			}
+		
+//		if (PlayerPrefs.GetInt ("cardReady") == 1 && initialized != 0) {
+//			StartCoroutine (show ());
+//		}
+	}
+
+	void clickedCount (string spriteName, string spriteName2, string name)
+	{
+		if (spriteName == spriteName2) {
+			//answer is right == 相同的点击不计数 
+			if (!Globe.sameSize.ContainsKey (name)) {
+				Globe.sameSize.Add (name, 1);
+			} 
+			turnTo (name, "TurnGo");
+			appriseExam ();
+		} else {
+			//answer is wrong == 相同的点击计数
+			Globe.errorCount--;//= ++clickCount;
+			print (Globe.errorCount);
+//			if (Globe.differentSize.ContainsKey (name)) {
+//				Globe.differentSize [name]++;
+//			} else
+//				Globe.differentSize.Add (name, 1);
+			
+			turnTo (name, "TurnBack");
+			UpdateTime (Globe.errorCount);
+				
+			if (Globe.errorCount <= 0) {
+				examObj.toPanelWin (0);
+			}
+		}
+		
+	}
+
+	void examPlay ()
+	{
+		if (transExample != null) {
+			transExample.GetComponent<UISlicedSprite> ().enabled = true;
+			transExample.animation.Play ("Center_UpRight");
+		}
 	}
 	
+	void mode1 (string name)
+	{//"标准模式-看3秒，找出指定水果，限错3次";
+		string theNumber = RegexUtil.RemoveNotNumber (getSpriteName (name));//print (spHead.spriteName);
+		string head = RegexUtil.RemoveNotNumber (spHead.spriteName);		
+		clickedCount (head, theNumber, name);						
+	}
+
+	void mode2 (string name)
+	{//经典模式-看5秒找相同水果，限错N次";
+		if (Globe.askatlases.Count > 0 && Globe.tmpString != null) {
+			string spriteName = getSpriteName (name);
+			print (getSpriteName (Globe.tmpString) + "?" + spriteName);
+			if (getSpriteName (Globe.tmpString) == spriteName) {
+				Globe.punish = true;
+				turnTo (name, "TurnGo");				
+			} else {				
+				turnTo (Globe.tmpString, "TurnBack");
+				turnTo (name, "TurnBack");	
+				
+				if (PlayerPrefs.GetInt("NowMode")==2) {
+					Globe.errorCount--;
+					UpdateTime (Globe.errorCount);
+					if (Globe.errorCount <= 0) {
+						examObj.toPanelWin (0);
+					}
+				}
+				
+				Globe.tmpString = null;
+			}
+			Globe.askatlases.Clear ();	
+		} else {
+			//记录上次精灵
+			Globe.askatlases.Add (name);
+			Globe.tmpString = name;			
+			turnTo (name, "TurnGo");
+		}
+		/*---------------------------
+		if (Globe.askatlases.Count > 0 && Globe.tmpString != null && !Globe.askatlases.Contains(name)) {
+			string spriteName = getSpriteName (name);
+			print (getSpriteName (Globe.tmpString) + "?" + spriteName);
+			if (getSpriteName (Globe.tmpString) == spriteName) {
+				Globe.punish=true;
+				turnTo (name, "TurnGo");				
+			} else {				
+				turnTo (Globe.tmpString, "TurnBack");
+				turnTo (name, "TurnBack");						
+			}			
+//			Globe.thisPanel = null;			
+			Globe.askatlases.Clear ();			
+			
+		} else if (!Globe.askatlases.Contains (name)) {			
+			//记录上次精灵
+			Globe.askatlases.Add (name);
+			Globe.tmpString = name;
+//			Globe.thisPanel = getTransOfSprite(name);
+			print (name);
+			autoReverse = false;
+			
+			turnTo (name, "TurnGo");
+		}*/
+	}
+	
+	void appriseExam ()
+	{
+		if (examObj != null) {
+			examObj.NextSprite (spHead.spriteName);
+		}
+	}
+
+	string getSpriteName (string name)
+	{
+		return transform.FindChild (name).FindChild ("Sprite-box").GetComponent<UISlicedSprite> ().spriteName;
+	}
+
+	Transform getTransOfSprite (string childrenName)
+	{
+		return transform.FindChild (childrenName);
+	}
+	
+	bool turnTo (string spriteName, string animateName)
+	{
+		return transform.FindChild (spriteName).animation.Play (animateName);
+//		animation.PlayQueued("TurnBack",QueueMode.PlayNow);
+	}
+
+	void UpdateTime (int score)
+	{
+		if (transTimes != null) {
+			transTimes.GetComponent<UILabel> ().text = score.ToString ();
+		}
+	}
 	
 	IEnumerator show ()
 	{				
-		sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua * sprite.transform.localRotation, Time.deltaTime);     		
-		spriteBg.transform.rotation = Quaternion.Slerp (spriteBg.transform.rotation, quaBg * spriteBg.transform.localRotation, Time.deltaTime);   
-		
-		print ("cardReady="+PlayerPrefs.GetInt("cardReady"));
-		
-		if( PlayerPrefs.GetInt ("cardReady") == 1)
-		{
-			bool correct = IsCorrect2 (Mathf.Round (sprite.transform.rotation.eulerAngles.y));
-			if (correct) {				
-				print ("in the correct =if");
-//				yield return null;  
-				yield return  new WaitForSeconds(45f);
-				PlayerPrefs.SetInt ("cardReady", 2);
-			}			
-		}else if(PlayerPrefs.GetInt ("cardReady") ==  2)
-		{
-			//反面
-			bool correct = IsNotCorrect2(Mathf.Round (spriteBg.transform.rotation.eulerAngles.y));
-			if (correct) {				
-				PlayerPrefs.DeleteKey ("cardReady");
-				print ("in the correct =else");
-				yield return null;  
-			}		
-		}
-			
-		
-//		//正面
-		float timeD = Time.deltaTime * 57f;
-//		print (timeD);return false;
-		
-
-//		print (font+"<<>>"+Correct);
-//		print(timeD+		"|WaitForSeconds" + Time.time);
-		
-		if (Time.time - timeD >= 3 && PlayerPrefs.GetInt ("cardReady") == 1) {
-			print ("in the Time=if");
-			PlayerPrefs.SetInt ("cardReady", 2);
+		if (initialized == 1) {
+			yield return  new WaitForSeconds(4.0f);
+			init (-1);			
 		} 
-		else if (Time.time - timeD >= 3 && PlayerPrefs.GetInt ("cardReady") == 2) {
-			print ("in the Time=else");
-			PlayerPrefs.DeleteKey ("cardReady");
-		}/**/
 		
-		yield return  new WaitForSeconds(timeD);		
+	}
+
+	public void init (int state)
+	{		
+		for (int i = 0; i < transform.GetChildCount(); i++) {
+			Transform _trans = transform.GetChild (i);
+//			Animation animate = _trans.animation;
+			
+			if (state == 1) {
+				_trans.animation.Play ("TurnGo");
+			} else if (state == 2) {
+				_trans.animation.Stop ();
+			} else if (state == -1) {
+				_trans.animation ["TurnGo"].time = 0;
+				_trans.animation.Play ("TurnGo");
+			}
+		}		
+		
+		if (state == 1) {
+			initialized = 1;
+		} else if (state == -1) {
+			initialized = 2;
+		}		
+		backTime = 30;//假设从100开始倒数，这个数值你可以自行修改呀		
 	}
 
 	bool IsNotCorrect2 (float euler)
 	{
-		print (euler);
+//		print (euler);
+//		if (euler ==0) {
+//			return false;
+//		}
 		if (270 < euler && euler < 360) {
 			spriteBg.enabled = false;
 			sprite.enabled = true;
@@ -107,11 +267,11 @@ public class TurnManager : MonoBehaviour {
 		return false;
 		
 	}
-	
+
 	bool IsCorrect2 (float euler)
 	{
 		//做减法运算,默认已经旋转180
-		print (euler);
+//		print (euler);
 		if (euler > 300) {
 			return true;
 		}
@@ -127,9 +287,8 @@ public class TurnManager : MonoBehaviour {
 		return false;		
 	}
 	
-	public void OnTurn ()
+	void OnTurn ()
 	{
-		++clickCount;
 		isBegin = true;
 		qua = Quaternion.Euler (0f, 180f, 0f) * sprite.transform.localRotation;
 		quaBg = Quaternion.Euler (0f, 180f, 0f) * spriteBg.transform.localRotation;
@@ -138,17 +297,6 @@ public class TurnManager : MonoBehaviour {
 //		sprite.transform.rotation = Quaternion.Slerp (sprite.transform.rotation, qua, Time.deltaTime);    
 	}
 	
-	public void init()
-	{
-		for (int i = 0; i < transform.GetChildCount(); i++) {
-			spriteBg = transform.GetChild(i).FindChild("Sprite-boxBg").GetComponent<UISlicedSprite>();
-			sprite = transform.GetChild(i).FindChild("Sprite-box").GetComponent<UISlicedSprite>();
-//			this.OnTurn();
-//			print (sprite.spriteName+"|"+spriteBg.spriteName);
-		}
-		beginTurn=true;
-		
-	}
 	void IsNotCorrect (float euler)
 	{
 		if (0 < euler && euler < 180) {
@@ -158,7 +306,7 @@ public class TurnManager : MonoBehaviour {
 				sprite.enabled = false;
 			}
 			if (euler > 90) {					
-				if (autoReverse && clickCount != 0) {
+				if (autoReverse) {
 					this.OnTurn ();
 					
 				} else {
@@ -173,7 +321,7 @@ public class TurnManager : MonoBehaviour {
 			//isCorrect=false;
 		}
 	}
-	
+
 	void IsCorrect (float euler)
 	{
 		if (180 < euler && euler < 360) {				
@@ -184,7 +332,7 @@ public class TurnManager : MonoBehaviour {
 				sprite.enabled = true;
 			}
 			if (euler > 270) {
-				if (autoReverse && clickCount != 0) {
+				if (autoReverse) {
 					this.OnTurn ();
 					
 				} else {
@@ -192,9 +340,6 @@ public class TurnManager : MonoBehaviour {
 					sprite.enabled = false;
 				}
 				//isBegin=false;
-					
-
-
 			}
 
 		}

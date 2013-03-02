@@ -43,17 +43,19 @@ public class GamePlayLayer : MonoBehaviour
 		string time = string.Empty;
 		switch (_nowMode) {
 		case 1:
-			time = "3";			
+			Globe.errorCount=3;
+			time = Globe.errorCount.ToString();			
 			createAtlases (Globe.askbox);						
 			print ("current level is " + _nowPlay + " from 1 ,and findCount = " + Globe.findCount);			
 			break;
 		case 2:
-			time = "1";//每一个关卡 允许错误次数
+			Globe.errorCount=1;
+			time = Globe.errorCount.ToString();	//每一个关卡 允许错误次数
 			createAtlases (Globe.askbox2);
 			break;
 		case 3:
-			time = "00:30";
-			
+			time = "0:30";//30
+			createAtlases (Globe.askbox3);
 			break;
 			
 		}
@@ -75,6 +77,7 @@ public class GamePlayLayer : MonoBehaviour
 		Transform transFruit = transTitle.FindChild ("ExampleFruit");
 		if (_nowMode == 1) {
 		UISlicedSprite ssp = transFruit.GetComponent<UISlicedSprite> ();
+		ssp.enabled=false;
 		ssp.spriteName = Globe.askatlases [Globe.askatlases.Count - 1];//only normal mode
 		print ("look for sprite =" + ssp.spriteName);
 					
@@ -220,7 +223,7 @@ public class GamePlayLayer : MonoBehaviour
 			ut.createTemp (names);
 		}
 		PlayerPrefs.SetInt ("cardReady", 1);
-		transGameWindow.GetComponent<TurnManager>().init();
+		transGameWindow.GetComponent<TurnManager>().init(1);
 
 		//		else if (PlayerPrefs.GetInt ("PanelGamePlay") == -1) {
 		//			//中途退出

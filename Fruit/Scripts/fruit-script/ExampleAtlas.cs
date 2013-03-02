@@ -5,7 +5,6 @@ public class ExampleAtlas : MonoBehaviour
 {
 	
 	public delegate void replaceSprite ();
-
 	public event replaceSprite EventReplace;
 	
 	public GameObject nextLayer;
@@ -87,5 +86,10 @@ public class ExampleAtlas : MonoBehaviour
 		nextLayer.GetComponent<TweenPosition> ().Play (true);		
 		nextLayer.GetComponent<GameWinLayer>().init(result);
 
+	}
+	public bool dollyOver(int a)
+	{
+		animation.Stop();
+		return true;
 	}
 }

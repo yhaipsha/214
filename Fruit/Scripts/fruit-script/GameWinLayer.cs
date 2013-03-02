@@ -13,8 +13,6 @@ public class GameWinLayer : MonoBehaviour
 	
   	public void init (int result)
 	{
-
-		
 		switch (result) {
 		case 0:
 			showResultSprite( false,"game_failed");
@@ -23,6 +21,13 @@ public class GameWinLayer : MonoBehaviour
 			showResultSprite( true,"game_win");
 			break;
 		}
+		
+		//清除计数器记录内容
+		Globe.errorCount = 3;
+		Globe.sameSize.Clear();
+		
+
+		
 		/*
 		GameObject[] panels = Globe.getPanelObject (transform
 			, new string[]{"Panel - Main","Panel - Shop","Panel - Help","Panel - Level","Panel - GamePlay","Panel - GamePlay"});
@@ -44,7 +49,7 @@ public class GameWinLayer : MonoBehaviour
         print("lastLevelName = " + lastlevelName);
 		
 		
-		//保留做好的成绩星
+		//保留最好的成绩星
 		if (on) {
 			 foreach( KeyValuePair<string,int> entry in Globe.sameSize)
             {
@@ -55,15 +60,24 @@ public class GameWinLayer : MonoBehaviour
                 );
             }
 			
-			PlayerPrefs.SetInt(lastlevelName, 3-Globe.differentSize.Count == 0?1:3-Globe.differentSize.Count);
-		}else
+			PlayerPrefs.SetInt(lastlevelName, Globe.errorCount==0?1:Globe.errorCount);
+			switch (PlayerPrefs.GetInt("NowMode")) {
+				case 1:
+					break;
+				case 2:
+					break;
+			}
+			
+		}
+		else
 		{
-			int name = PlayerPrefs.GetInt(lastlevelName);
-			PlayerPrefs.SetInt(lastlevelName, name>0?name:0);
+			int score = PlayerPrefs.GetInt(lastlevelName);
+			PlayerPrefs.SetInt(lastlevelName, score>0?score:0);
 			print (PlayerPrefs.GetInt(lastlevelName));
 		}
-		Globe.sameSize.Clear();
-		Globe.differentSize.Clear();
+
+//		Globe.sameSize.Clear();
+//		Globe.differentSize.Clear();
 
 	}
 	

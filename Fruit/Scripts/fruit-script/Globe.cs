@@ -21,6 +21,8 @@ public class Globe
 	public static string[] stayNames=new string[]{"Offset","GameWindow"};
 	public static HelpFruit helper;
 	public static Transform thisPanel;
+	public static string tmpString;
+	public static bool punish;
 	
 	public static Vector3 gamePause = new Vector3 (0, -680f, -5f);
 	public static Vector3 cardPanel1 = new Vector3 (-256f, 128f, -0.5f);
@@ -37,6 +39,7 @@ public class Globe
 	public static int[] box;			//随机数组
 	public static List<string[]> askbox;	//每个关卡数组
 	public static List<string[]> askbox2;	
+	public static List<string[]> askbox3;
 	public static List<string> askatlases;//卡牌头 && lastSprite
 	public static List<string> cards;		//卡牌
 	public static int findCount;

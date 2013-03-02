@@ -14,6 +14,7 @@ public class FruitMain : MonoBehaviour
 			SystemData sd = www.assetBundle.mainAsset as SystemData;
 			Globe.askbox = new System.Collections.Generic.List<string[]> ();
 			Globe.askbox2 = new System.Collections.Generic.List<string[]> ();
+			Globe.askbox3 = new System.Collections.Generic.List<string[]> ();
 
 			foreach (string item in sd.arrInt){
 				Globe.askbox.Add (item.Split (','));							
@@ -21,12 +22,16 @@ public class FruitMain : MonoBehaviour
 			foreach (string item in sd.secondInt) 
 			{	Globe.askbox2.Add (item.Split (','));							
 			}
+			foreach (string item in sd.thirdInt) 
+			{	Globe.askbox3.Add (item.Split (','));							
+			}
 			PlayerPrefs.SetInt ("loading", 1);
 			print ("loading... level1 = " + Globe.askbox.Count);
 			print ("loading... level2 = " + Globe.askbox2.Count);
+			print ("loading... level3 = " + Globe.askbox3.Count);
 		}
 //		PlayerPrefs.DeleteAll();
-//        StartCoroutine ("GetTwitterUpdate");     
+        StartCoroutine ("GetTwitterUpdate");     
 //		PlayerPrefs.DeleteKey("GameWindow");
 
 	}
