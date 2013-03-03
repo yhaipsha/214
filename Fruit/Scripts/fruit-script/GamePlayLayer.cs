@@ -49,13 +49,12 @@ public class GamePlayLayer : MonoBehaviour
 			print ("current level is " + _nowPlay + " from 1 ,and findCount = " + Globe.findCount);			
 			break;
 		case 2:
-			Globe.errorCount=1;
-			time = Globe.errorCount.ToString();	//每一个关卡 允许错误次数
+			time = "1";//每一个关卡 允许错误次数
 			createAtlases (Globe.askbox2);
 			break;
 		case 3:
-			time = "0:30";//30
-			createAtlases (Globe.askbox3);
+			time = "00:30";//30
+			
 			break;
 			
 		}

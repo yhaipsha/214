@@ -1,14 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public delegate void ProcessDelegate (object sender,string e);
-
-public delegate string animatePlayOver (string animateName);
-
 public class TurnManager : MonoBehaviour
-{	
-	public delegate void diePunish (string lname,string name);
-	
+{
+	public bool autoReverse = false;
 	public Transform transExample;
 	public Transform transTimes;
 	public Transform transLable;
@@ -17,7 +12,7 @@ public class TurnManager : MonoBehaviour
 	ExampleAtlas examObj;
 	float backTime;//用于计数的变量
 	
-	private bool autoReverse=false;
+	
 	int clickCount = 0;
 	private bool isBegin = false;
 	Quaternion qua;
@@ -25,30 +20,15 @@ public class TurnManager : MonoBehaviour
 	UISprite sprite;
 	UISprite spriteBg;
 	bool beginTurn = false;
-	bool punish = false;
-	TurnAnimate ta;
-
-	void doPunish (string name)
-	{
-		print (name + "?" + Globe.tmpString);
-		if (name != Globe.tmpString) {
-			Destroy (getTransOfSprite (name).gameObject);	
-			Destroy (getTransOfSprite (Globe.tmpString).gameObject);				
-			Globe.tmpString = null;
-			Globe.punish = false;
-		}
-		if (transform.GetChildCount () <= 2) {
-			transExample.GetComponent<ExampleAtlas> ().toPanelWin (1);
-		}
-
-	}
 
 	void Start ()
-	{					
+	{				
+		backTime = 30;//假设从100开始倒数，这个数值你可以自行修改呀
+//		target = GameObject.FindWithTag ("Player");
 		
 		Globe.sameSize = new System.Collections.Generic.Dictionary<string, int> ();
-//		Globe.differentSize = new System.Collections.Generic.Dictionary<string, int> ();
-//		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject> ();
+		Globe.differentSize = new System.Collections.Generic.Dictionary<string, int> ();
+		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject> ();
 		
 		if (transExample != null) {
 			examObj = transExample.GetComponent<ExampleAtlas> ();
@@ -59,28 +39,16 @@ public class TurnManager : MonoBehaviour
 
 	void Update ()
 	{
-		if (initialized == 2 && PlayerPrefs.GetInt ("NowMode") != 3) {			
+		if (initialized == 2) {
 			initialized = 0;
-			examPlay ();	
+			examPlay ();
 			init (2);
 			PlayerPrefs.DeleteKey ("cardReady");
-		}
-		
-		if (initialized == 2 && PlayerPrefs.GetInt ("NowMode") == 3) {
-//			print (backTime.ToString ("F0"));//每帧都更新时间变化，F0表示小数点后显示0位，如果你需要可以改变0为相应的位数！		
+		}		
+		if (PlayerPrefs.GetInt ("NowMode") == 3) {
+			print (backTime.ToString ("F0"));//每帧都更新时间变化，F0表示小数点后显示0位，如果你需要可以改变0为相应的位数！		
 			backTime = backTime - Time.deltaTime;//总时间i减去每帧消耗的时间，当然就等于当前时间啦，对吧？
-			transTimes.GetComponent<UILabel> ().text ="0:"+ backTime.ToString ("F0");	
-			
-			if(backTime>29.0f){
-				init (2);
-				PlayerPrefs.DeleteKey ("cardReady");
-			}else if(backTime<=0.0f)
-			{
-				examObj.toPanelWin (0);
-			}
 		}
-		
-		
 		
 //		if (PlayerPrefs.GetInt ("cardReady") == 1 && initialized != 0) {
 //			StartCoroutine (show ());
@@ -94,12 +62,13 @@ public class TurnManager : MonoBehaviour
 			if (!Globe.sameSize.ContainsKey (name)) {
 				Globe.sameSize.Add (name, 1);
 			} 
-			turnTo (name, "TurnGo");
+			
+			autoReverse = false;
 			appriseExam ();
 		} else {
-			//answer is wrong == 相同的点击计数
 			Globe.errorCount--;//= ++clickCount;
 			print (Globe.errorCount);
+			//answer is wrong == 相同的点击计数
 //			if (Globe.differentSize.ContainsKey (name)) {
 //				Globe.differentSize [name]++;
 //			} else
@@ -126,69 +95,70 @@ public class TurnManager : MonoBehaviour
 	void mode1 (string name)
 	{//"标准模式-看3秒，找出指定水果，限错3次";
 		string theNumber = RegexUtil.RemoveNotNumber (getSpriteName (name));//print (spHead.spriteName);
-		string head = RegexUtil.RemoveNotNumber (spHead.spriteName);		
+		string head = RegexUtil.RemoveNotNumber (spHead.spriteName);
+		
 		clickedCount (head, theNumber, name);						
+		/*	
+		if (head == theNumber) {
+			autoReverse = false;
+			appriseExam ();
+				
+		} else {				
+			turnBack (name, "TurnBack");
+			UpdateTime (3 - Globe.differentSize.Count);
+				
+			if (Globe.differentSize.Count >= 3) {
+				examObj.toPanelWin (0);
+			}
+		}*/
 	}
 
 	void mode2 (string name)
 	{//经典模式-看5秒找相同水果，限错N次";
-		if (Globe.askatlases.Count > 0 && Globe.tmpString != null) {
-			string spriteName = getSpriteName (name);
-			print (getSpriteName (Globe.tmpString) + "?" + spriteName);
-			if (getSpriteName (Globe.tmpString) == spriteName) {
-				Globe.punish = true;
-				turnTo (name, "TurnGo");				
-			} else {				
-				turnTo (Globe.tmpString, "TurnBack");
-				turnTo (name, "TurnBack");	
-				
-				if (PlayerPrefs.GetInt("NowMode")==2) {
-					Globe.errorCount--;
-					UpdateTime (Globe.errorCount);
-					if (Globe.errorCount <= 0) {
-						examObj.toPanelWin (0);
-					}
-				}
-				
-				Globe.tmpString = null;
-			}
-			Globe.askatlases.Clear ();	
-		} else {
-			//记录上次精灵
-			Globe.askatlases.Add (name);
-			Globe.tmpString = name;			
-			turnTo (name, "TurnGo");
-		}
-		/*---------------------------
-		if (Globe.askatlases.Count > 0 && Globe.tmpString != null && !Globe.askatlases.Contains(name)) {
-			string spriteName = getSpriteName (name);
-			print (getSpriteName (Globe.tmpString) + "?" + spriteName);
-			if (getSpriteName (Globe.tmpString) == spriteName) {
-				Globe.punish=true;
-				turnTo (name, "TurnGo");				
-			} else {				
-				turnTo (Globe.tmpString, "TurnBack");
-				turnTo (name, "TurnBack");						
-			}			
-//			Globe.thisPanel = null;			
-			Globe.askatlases.Clear ();			
+
+		if (Globe.askatlases.Count > 0 && Globe.thisPanel != null && Globe.askatlases [0] != name) {
 			
-		} else if (!Globe.askatlases.Contains (name)) {			
+			UISprite ltsp = Globe.thisPanel.FindChild ("Sprite-box").GetComponent<UISprite> ();
+//			UISprite tsp =  transform.FindChild ("Sprite-box").GetComponent<UISprite> ();
+			string spriteName = getSpriteName(name);
+			print (ltsp.spriteName + "?" + spriteName);
+			if (ltsp.spriteName == spriteName) {
+//				playReplace ();
+				Destroy (Globe.thisPanel.gameObject);
+				Destroy(getTransFatherOfSprite(name).gameObject);
+				Globe.askatlases.Clear ();
+			} else {
+				;
+//				StartCoroutine(show());
+				Globe.thisPanel.gameObject.GetComponent<TurnRight2> ().Turn ();
+//				this.OnClick();
+			}
+			
+			Globe.thisPanel = null;
+			Globe.askatlases.Clear ();
+			
+		} else if (!Globe.askatlases.Contains (name)) {
 			//记录上次精灵
 			Globe.askatlases.Add (name);
-			Globe.tmpString = name;
-//			Globe.thisPanel = getTransOfSprite(name);
+			Globe.thisPanel = transform;
 			print (name);
 			autoReverse = false;
+		}
+		
+//		if (transform.parent.GetChildCount () <= 0) {
+//			print ("----------");
+//			GameWinLayer gw = Globe.getPanelOfParent (transform.parent.parent, 1, "Panel - GameWin").GetComponent<GameWinLayer> ();
+//			gw.init (1);
+//			
+//		}
 			
-			turnTo (name, "TurnGo");
-		}*/
 	}
 	
 	void appriseExam ()
 	{
 		if (examObj != null) {
 			examObj.NextSprite (spHead.spriteName);
+//			print (spHead.spriteName);
 		}
 	}
 
@@ -196,15 +166,14 @@ public class TurnManager : MonoBehaviour
 	{
 		return transform.FindChild (name).FindChild ("Sprite-box").GetComponent<UISlicedSprite> ().spriteName;
 	}
-
-	Transform getTransOfSprite (string childrenName)
+	Transform getTransFatherOfSprite(string childrenName)
 	{
 		return transform.FindChild (childrenName);
 	}
 	
-	bool turnTo (string spriteName, string animateName)
+	void turnTo(string spriteName, string animateName)
 	{
-		return transform.FindChild (spriteName).animation.Play (animateName);
+		transform.FindChild (spriteName).animation.Play (animateName);
 //		animation.PlayQueued("TurnBack",QueueMode.PlayNow);
 	}
 
@@ -238,14 +207,14 @@ public class TurnManager : MonoBehaviour
 				_trans.animation ["TurnGo"].time = 0;
 				_trans.animation.Play ("TurnGo");
 			}
-		}		
+		}
+		
 		
 		if (state == 1) {
 			initialized = 1;
 		} else if (state == -1) {
 			initialized = 2;
 		}		
-		backTime = 30;//假设从100开始倒数，这个数值你可以自行修改呀		
 	}
 
 	bool IsNotCorrect2 (float euler)

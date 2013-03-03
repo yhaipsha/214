@@ -1,74 +1,62 @@
 using UnityEngine;
 using System.Collections;
 
-public class TurnAnimate : MonoBehaviour
-{	
-	public event ProcessDelegate ProcessEvent;
-	public event animatePlayOver EventPlayOver;
-
+public class TurnAnimate : MonoBehaviour {
+	
 	public UISprite sprite;
 	public UISprite spriteBg;
-
+	
+	//只有精灵脚本
 //	private GameObject target;
 	public bool autoReverse = false;
+
 	UISlicedSprite spHead;
 	// Use this for initialization
-	
-	void ProcessAction (object sender, string e)
-	{
-		if (ProcessEvent == null)
-			ProcessEvent += new ProcessDelegate (t_ProcessEvent);
-		ProcessEvent (sender, e);
-	}
-
-	//如果没有自己指定关联方法，将会调用该方法抛出错误
-	void t_ProcessEvent (object sender, string e)
-	{
-		print ("The method or operation is not implemented.??" + e);
-	}
-	string playOver (string animateName)
-	{		
-//		if ( ProcessEvent== null)
-//                ProcessEvent += new ProcessDelegate(t_ProcessEvent);
-//            ProcessEvent(sender, e);
-//		print (Globe.sameSize[transform.name]);
-		if (animateName == "turn_go"  && PlayerPrefs.GetInt ("NowMode")!=1 && Globe.punish) {
-				SendMessageUpwards("doPunish",transform.name);			
-		}
-		return animateName;
-	}
-	
 	void Start ()
 	{		
-		EventPlayOver += new animatePlayOver(playOver);
+//		
+//		Globe.sameSize = new System.Collections.Generic.Dictionary<string, int> ();
+//		Globe.differentSize = new System.Collections.Generic.Dictionary<string, int> ();
+//		Globe.tempGameObject = new System.Collections.Generic.List<UnityEngine.GameObject> ();
+		
+//		target = GameObject.FindWithTag ("Player");		
+//		if (target != null) {
+//			ExampleAtlas ra = target.transform.GetComponent<ExampleAtlas> ();
+//			ra.EventReplace += new ExampleAtlas.replaceSprite (OnClick);
+//			spHead = target.transform.GetComponent<UISlicedSprite> ();	
+//		}
 	}
-
 	void OnClick ()
 	{		
-		if (sprite != null && spriteBg != null) {	
+		if (sprite != null && spriteBg != null) {//		&& !isBegin			
+//			transform.animation["SpriteTurn"].wrapMode=WrapMode.Clamp;
+//			animation.PlayQueued("shoot", QueueMode.PlayNow);
+			
+//			animation.Play("TurnGo");
+//			animation.Play("SpriteTurn",PlayMode.StopSameLayer);
+			
+//			animation.Play(AnimationPlayMode.Mix);
 			switch (PlayerPrefs.GetInt ("NowMode")) {
 			case 1:
-				SendMessageUpwards ("mode1", transform.name);
+				SendMessageUpwards("mode1",transform.name);
+//				mode1 ();
 				break;
 			case 2:
-				SendMessageUpwards ("mode2", transform.name);
-				break;
-			case 3:
 				SendMessageUpwards("mode2",transform.name);
 				break;
-			}		
+			}
+//			animation.Play();
+			
 		}
 	}
-
 	void Update ()
 	{
 
 		if (PlayerPrefs.GetInt ("cardReady") == 1) {
-			SendMessageUpwards ("show");
-			PlayerPrefs.SetInt ("cardReady", 2);
+			SendMessageUpwards("show");
+			PlayerPrefs.SetInt("cardReady",2);
 		}
 	}
-
 	void mode11111 ()
 	{//"标准模式-看3秒，找出指定水果，限错3次";
 		string theNumber = RegexUtil.RemoveNotNumber (sprite.spriteName);
@@ -90,15 +78,14 @@ public class TurnAnimate : MonoBehaviour
 
 //		ExampleAtlas ra = target.transform.GetComponent<ExampleAtlas> (); 
 //		if (target != null) {
-		if (head == theNumber) {
-			print (theNumber);
+			if (head == theNumber) {print (theNumber);
 //				animation.PlayQueued("TurnGo",QueueMode.PlayNow);
 				
-			playReplace ();
-			autoReverse = false;
+				playReplace ();
+				autoReverse = false;
 //				ra.NextSprite (spHead.spriteName);
 				
-		} else {				
+			} else {				
 //				transform.animation["SpriteTurn"].time=0;
 //				animation.PlayQueued("TurnGo",QueueMode.CompleteOthers);
 //				animation.PlayQueued("TurnBack",QueueMode.PlayNow);
@@ -106,17 +93,16 @@ public class TurnAnimate : MonoBehaviour
 //				transform.animation.Stop();
 //				transform.animation.Sample();
 //				gameObject.SampleAnimation(animation.clip, 0);				
-			SendMessageUpwards ("turnBack", transform.name);
-			SendMessageUpwards ("UpdateTime", 3 - Globe.differentSize.Count);		
+				SendMessageUpwards("turnBack",transform.name);
+				SendMessageUpwards("UpdateTime",3-Globe.differentSize.Count);		
 				
-			if (Globe.differentSize.Count >= 3) {
+				if (Globe.differentSize.Count >= 3) {
 //					ra.toPanelWin (0);
+				}
 			}
-		}
 
 //		}
 	}
-
 	void mode2222222 ()
 	{//经典模式-看5秒找相同水果，限错N次";
 
@@ -157,9 +143,10 @@ public class TurnAnimate : MonoBehaviour
 		}
 			
 	}
-
-	
-
+	void playOver(string animateName)
+	{
+		print (animateName);
+	}
 	IEnumerator playReplace ()
 	{
 		//		ExampleAtlas ra = target.transform.GetComponent<ExampleAtlas>();

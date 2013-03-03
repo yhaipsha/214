@@ -389,19 +389,8 @@ public class Export
     
 		int[] ask2_50 = {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2};
     
-		sd.thirdInt = new List<string>();
-				
-		sd.thirdInt.Add("2,2,2");
-		sd.thirdInt.Add("2,2,2,2");
-		sd.thirdInt.Add("2,2,2,2,2");
-		sd.thirdInt.Add("2,2,2,2,2,2");
-		sd.thirdInt.Add("2,2,2,2,2,2,2");//5
-		sd.thirdInt.Add("2,2,2,2,2,2,2,2");
-		sd.thirdInt.Add("2,2,2,2,2,2,2,2,2");
-		sd.thirdInt.Add("2,2,2,2,2,2,2,2,2,2");
-		sd.thirdInt.Add("2,2,2,2,2,2,2,2,2,2,2");
-		sd.thirdInt.Add("2,2,2,2,2,2,2,2,2,2,2,2");//10
-		//挑战关卡    
+		//挑战关卡
+    
 		int[] box3_1 = {1,1,1,1,1,1,1};
 		int[] ask3_1 = {2,2,2};
 		int[] box3_2 = {1,1,1,1,1,1,1,1,2};

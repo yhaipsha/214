@@ -5,6 +5,7 @@ public class ExampleAtlas : MonoBehaviour
 {
 	
 	public delegate void replaceSprite ();
+
 	public event replaceSprite EventReplace;
 	
 	public GameObject nextLayer;
@@ -28,7 +29,7 @@ public class ExampleAtlas : MonoBehaviour
 
 		if (EventReplace != null && Globe.askatlases.Contains(name)) {
 			//do replace && Globe.sameSize.ContainsKey (name)
-			index++;//print (index+" || "+name);
+			index++;print (index+" || "+name);
 			if(index == Globe.findCount)
 			{
 				switch (PlayerPrefs.GetInt("NowMode")) {
